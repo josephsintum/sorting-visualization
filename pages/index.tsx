@@ -11,15 +11,21 @@ import Slider from "@material-ui/core/Slider";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 
+const generateData = (value) => Array.from(Array(value)).map(x => Math.floor(Math.random() * 110))
 
 export default function Index() {
 
     const [sortAlgo, setSortAlgo] = React.useState("bubble")
-    const [value, setValue] = React.useState<number>(30);
+    const [value, setValue] = React.useState<number>(30)
+    const [data, setData] = React.useState<number[]>([])
+
+    React.useEffect(() => {
+        setData(generateData(value))
+    }, [value])
 
     return (
         <Container maxWidth="lg">
-            <Grid container spacing={2} style={{margin:"50px"}}>
+            <Grid container spacing={2} style={{margin: "50px"}}>
                 <Grid item xs={4}>
                     <Box>
                         <FormControl component="fieldset">
@@ -48,8 +54,14 @@ export default function Index() {
                         </Button>
                     </Box>
                 </Grid>
-                <Grid item sm={8}>
-
+                <Grid item sm={8}
+                      container
+                      justify="space-evenly"
+                      alignItems="baseline"
+                      direction="row">
+                    {data.map((value, index) =>
+                        <Box key={index}
+                             style={{backgroundColor: "blue", height: (value*3), flexGrow: 1, marginRight: 2}}/>)}
                 </Grid>
             </Grid>
         </Container>
