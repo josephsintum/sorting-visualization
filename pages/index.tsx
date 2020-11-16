@@ -10,9 +10,9 @@ import Slider from '@material-ui/core/Slider'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
 
-const generateData = (value) => Array.from(Array(value)).map(x => Math.floor(Math.random() * 110))
+const generateData = (value: number) => Array.from(Array(value)).map(() => Math.floor(Math.random() * 110))
 
-const timer = () => new Promise(res => setTimeout(res, 50))
+const timer = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 const bubbleSort = async (array: number[], setArray) => {
     const data = [...array]
@@ -20,7 +20,7 @@ const bubbleSort = async (array: number[], setArray) => {
         for (let j = 0; j < (data.length - i); j++) {
             if (data[j] > data[j + 1]) {
                 [data[j], data[j + 1]] = [data[j + 1], data[j]]
-                await timer()
+                await timer(500/data.length)
                 setArray([...data])
             }
         }
@@ -63,11 +63,12 @@ export default function Index() {
 
     return (
         <Container maxWidth="lg">
-            <Grid container spacing={2} style={{ margin: '50px' }}>
+            <Grid container spacing={5} style={{ margin: '30px auto' }}>
                 <Grid item xs={4}>
-                    <Box>
+                    <Box mb={2}>
                         <FormControl component="fieldset">
                             <FormLabel component="legend">Sort Algorithms</FormLabel>
+                            <br/>
                             <RadioGroup aria-label="SortAlgo" name="sortAlgo" value={algorithm}
                                         onChange={(e) => setAlgorithm(e.target.value)}>
                                 <FormControlLabel value="bubble" control={<Radio />} label="Bubble" />
@@ -77,7 +78,7 @@ export default function Index() {
                             </RadioGroup>
                         </FormControl>
                     </Box>
-                    <Box>
+                    <Box mb={2}>
                         <Slider value={value}
                                 onChange={(e, newValue) => setValue(newValue as number)}
                                 valueLabelDisplay="auto"
@@ -99,12 +100,13 @@ export default function Index() {
                       direction="row">
                     {data.map((value, index) =>
                         <Box key={index}
+                             mr="1px"
                              style={{
                                  backgroundColor: '#2196f3',
                                  height: (value * 3),
                                  flexGrow: 1,
-                                 marginRight: 2,
-                             }} />)}
+                             }}
+                        />)}
                 </Grid>
             </Grid>
         </Container>
