@@ -14,22 +14,43 @@ const generateData = (value: number) => Array.from(Array(value)).map(() => Math.
 
 const timer = (ms: number) => new Promise(res => setTimeout(res, ms))
 
-const bubbleSort = async (array: number[], setArray) => {
-    const data = [...array]
+const bubbleSort = async (data: number[], setArray) => {
     for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < (data.length - i); j++) {
             if (data[j] > data[j + 1]) {
                 [data[j], data[j + 1]] = [data[j + 1], data[j]]
-                await timer(500/data.length)
+                await timer(500 / data.length)
                 setArray([...data])
             }
         }
     }
 }
 
+const mergeSort = async (data: number[], setArray) => {
+    if (data.length <= 1) return data
+    let mid = Math.floor(data.length / 2),
+        left = await mergeSort(data.slice(0, mid), setArray),
+        right = await mergeSort(data.slice(mid), setArray)
+
+    let result = merge(left, right)
+    await timer(500 / data.length)
+    setArray([...result])
+    return result
+}
+
+const merge = (arr1: number[], arr2: number[]) => {
+    let sorted = []
+    while (arr1.length && arr2.length) {
+        if (arr1[0] < arr2[0]) sorted.push(arr1.shift())
+        else sorted.push(arr2.shift())
+    }
+    return sorted.concat(arr1.slice().concat(arr2.slice()))
+}
+
+
 export default function Index() {
 
-    const [algorithm, setAlgorithm] = React.useState('bubble')
+    const [algorithm, setAlgorithm] = React.useState('merge')
     const [value, setValue] = React.useState<number>(30)
     const [data, setData] = React.useState<number[]>([])
     const [sorting, setSorting] = React.useState(false)
@@ -40,15 +61,21 @@ export default function Index() {
     }, [value])
 
     const sort = () => {
+
+        let array = [...data]
+
         switch (algorithm) {
             case 'bubble':
                 setSorting(true)
-                bubbleSort(data, setData).then(() => {
+                bubbleSort(array, setData).then(() => {
                     setSorting(false)
                 })
                 break
             case 'merge':
-                console.log('to be implemented')
+                setSorting(true)
+                mergeSort(array, setData).then(() => {
+                    setSorting(false)
+                })
                 break
             case 'quick':
                 console.log('to be implemented')
@@ -68,11 +95,11 @@ export default function Index() {
                     <Box mb={2}>
                         <FormControl component="fieldset">
                             <FormLabel component="legend">Sort Algorithms</FormLabel>
-                            <br/>
+                            <br />
                             <RadioGroup aria-label="SortAlgo" name="sortAlgo" value={algorithm}
                                         onChange={(e) => setAlgorithm(e.target.value)}>
                                 <FormControlLabel value="bubble" control={<Radio />} label="Bubble" />
-                                <FormControlLabel value="merge" control={<Radio />} label="Merge" disabled />
+                                <FormControlLabel value="merge" control={<Radio />} label="Merge" />
                                 <FormControlLabel value="quick" control={<Radio />} label="Quick" disabled />
                                 <FormControlLabel value="heap" control={<Radio />} label="Heap" disabled />
                             </RadioGroup>
