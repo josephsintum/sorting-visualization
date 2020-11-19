@@ -26,25 +26,32 @@ const bubbleSort = async (data: number[], setArray) => {
     }
 }
 
-const mergeSort = async (data: number[], setArray) => {
-    if (data.length <= 1) return data
-    let mid = Math.floor(data.length / 2),
-        left = await mergeSort(data.slice(0, mid), setArray),
-        right = await mergeSort(data.slice(mid), setArray)
-
-    let result = merge(left, right)
-    await timer(500 / data.length)
-    setArray([...result])
-    return result
+const mergeSort = async (mainArray: number[], start: number, end: number, auxArray: number[], setArray) => {
+    if (start === end) return
+    let middle = Math.floor((start + end) / 2)
+    await mergeSort(auxArray, start, middle, mainArray, setArray)
+    await mergeSort(auxArray, middle + 1, end, mainArray, setArray)
+    await merge(mainArray, start, middle, end, auxArray, setArray)
 }
 
-const merge = (arr1: number[], arr2: number[]) => {
-    let sorted = []
-    while (arr1.length && arr2.length) {
-        if (arr1[0] < arr2[0]) sorted.push(arr1.shift())
-        else sorted.push(arr2.shift())
+const merge = async (mainArray: number[], start: number, middle: number, end: number, auxArray: number[], setArray) => {
+    let k = start, i = start, j = middle + 1
+    while (i <= middle && j <= end) {
+        if (auxArray[i] <= auxArray[j]) mainArray[k++] = auxArray[i++]
+        else mainArray[k++] = auxArray[j++]
+        await timer(500 / mainArray.length)
+        setArray([...mainArray])
     }
-    return sorted.concat(arr1.slice().concat(arr2.slice()))
+    while (i <= middle) {
+        mainArray[k++] = auxArray[i++]
+        await timer(500 / mainArray.length)
+        setArray([...mainArray])
+    }
+    while (j <= end) {
+        mainArray[k++] = auxArray[j++]
+        await timer(500 / mainArray.length)
+        setArray([...mainArray])
+    }
 }
 
 
@@ -73,9 +80,9 @@ export default function Index() {
                 break
             case 'merge':
                 setSorting(true)
-                mergeSort(array, setData).then(() => {
-                    setSorting(false)
-                })
+                mergeSort(array, 0, array.length - 1, [...array], setData)
+                    .then(()=> setSorting(false))
+
                 break
             case 'quick':
                 console.log('to be implemented')
