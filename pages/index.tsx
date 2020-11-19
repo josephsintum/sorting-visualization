@@ -81,7 +81,7 @@ export default function Index() {
             case 'merge':
                 setSorting(true)
                 mergeSort(array, 0, array.length - 1, [...array], setData)
-                    .then(()=> setSorting(false))
+                    .then(() => setSorting(false))
 
                 break
             case 'quick':
@@ -122,9 +122,12 @@ export default function Index() {
                     </Box>
 
                     <Box>
-                        <Button variant="contained" color="primary" onClick={() => sort()} disabled={sorting}>
-                            Sort
-                        </Button>
+
+                        <Button variant="contained" style={{ marginRight: '15px' }} color="primary"
+                                onClick={() => setData(generateData(value))}
+                                disabled={sorting}>Shuffle</Button>
+                        <Button variant="contained" color="primary" onClick={() => sort()}
+                                disabled={sorting}>Sort</Button>
                     </Box>
                 </Grid>
                 <Grid item sm={8}
